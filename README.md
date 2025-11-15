@@ -1,1 +1,1 @@
-# -hackathon_app
+# hackathon_app
