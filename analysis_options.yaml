@@ -21,7 +21,6 @@ linter:
   # `// ignore_for_file: name_of_lint` syntax on the line or in the file
   # producing the lint.
   rules:
-    - avoid_print
     - prefer_single_quotes
     - annotate_overrides
     - discarded_futures
