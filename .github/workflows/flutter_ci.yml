@@ -9,11 +9,12 @@ on:
 jobs:
   flutter-lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.0
 
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2.21.0
         with:
           channel: stable
 
