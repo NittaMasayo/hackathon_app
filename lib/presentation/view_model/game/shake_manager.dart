@@ -18,9 +18,11 @@ class ShakeManager {
   final HeartbeatWaveController controller;
 
   void gameStart() {
+    // 既に開始している場合は何もしない
     if (_isStarted) return;
     _isStarted = true;
 
+    // ignore: deprecated_member_use
     _subscription = accelerometerEvents.listen((event) async {
       double z = event.z;
 
@@ -31,7 +33,10 @@ class ShakeManager {
         // 下方向に動いたときだけ1回バイブ
         if (!_vibrated && await Vibration.hasVibrator()) {
           _vibrated = true; // 一度振動したらフラグ立てる
-          await Vibration.vibrate(duration: 50);
+          await Vibration.vibrate(
+            duration: 50,
+            amplitude: 255, // 強度をMAX（Android）
+          );
           controller.triggerPulse();
         }
       }
@@ -44,6 +49,7 @@ class ShakeManager {
     });
   }
 
+  // リソースを解放
   Future<void> dispose() async {
     await _subscription?.cancel();
     _subscription = null;
