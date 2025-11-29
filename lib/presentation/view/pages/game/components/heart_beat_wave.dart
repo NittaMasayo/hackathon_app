@@ -6,12 +6,33 @@ import 'package:hackathon_app/constants/theme/app_colors.dart';
 ///
 /// 心拍波形コンポーネント
 ///
+class HeartbeatWaveController {
+  HeartbeatWaveController();
+
+  VoidCallback? _onTriggerPulse;
+
+  void _attach(VoidCallback trigger) {
+    _onTriggerPulse = trigger;
+  }
+
+  void _detach(VoidCallback trigger) {
+    if (_onTriggerPulse == trigger) {
+      _onTriggerPulse = null;
+    }
+  }
+
+  void triggerPulse() {
+    _onTriggerPulse?.call();
+  }
+}
+
 class HeartbeatWave extends StatefulWidget {
   final double bpm; // beats per minute
   final Color waveColor;
   final double baseAmplitude;
   final double waveSpeed; // how fast the baseline wave scrolls (seconds)
   final double frequency; // baseline wave cycles across the width
+  final HeartbeatWaveController? controller;
 
   const HeartbeatWave({
     super.key,
@@ -20,6 +41,7 @@ class HeartbeatWave extends StatefulWidget {
     this.baseAmplitude = 18,
     this.waveSpeed = 2.0,
     this.frequency = 1.5,
+    this.controller,
   });
 
   @override
@@ -51,6 +73,7 @@ class _HeartbeatWaveState extends State<HeartbeatWave>
 
     // Start a periodic timer to trigger the beat based on bpm
     _startBeatTimer();
+    widget.controller?._attach(_triggerPulse);
   }
 
   void _startBeatTimer() {
@@ -75,6 +98,10 @@ class _HeartbeatWaveState extends State<HeartbeatWave>
     if (oldWidget.bpm != widget.bpm) {
       _startBeatTimer();
     }
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller?._detach(_triggerPulse);
+      widget.controller?._attach(_triggerPulse);
+    }
     if ((oldWidget.waveSpeed != widget.waveSpeed) ||
         (oldWidget.frequency != widget.frequency)) {
       _phaseController.duration = Duration(milliseconds: (widget.waveSpeed * 1000).round());
@@ -86,6 +113,7 @@ class _HeartbeatWaveState extends State<HeartbeatWave>
 
   @override
   void dispose() {
+    widget.controller?._detach(_triggerPulse);
     _beatTimer?.cancel();
     _phaseController.dispose();
     _pulseController.dispose();
