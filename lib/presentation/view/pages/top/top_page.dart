@@ -67,18 +67,6 @@ class _TopPageState extends State<TopPage> {
                       context.go(AppRoutes.ready);
                     },
                   ),
-
-                  /// TODO: 心臓マッサージ画面への遷移確認時に追加・完成時に削除
-                  // CommonButton(
-                  //   bgColor: AppColors.strawberryRed,
-                  //   children: Text(
-                  //     '心臓マッサージ画面へ',
-                  //     style: TextStyle(color: AppColors.accentColor),
-                  //   ),
-                  //   tapFunc: () {
-                  //     context.go(AppRoutes.game);
-                  //   },
-                  // ),
                   SizedBox(height: AppSize.sm),
                   CommonButton(
                     btnWidth: topBtnWidth,
@@ -94,18 +82,6 @@ class _TopPageState extends State<TopPage> {
                       context.go(AppRoutes.guide);
                     },
                   ),
-
-                  /// TODO: 結果確認画面への遷移確認時に追加・完成時に削除
-                  // CommonButton(
-                  //   bgColor: AppColors.strawberryRed,
-                  //   children: Text(
-                  //     '結果確認画面へ',
-                  //     style: TextStyle(color: AppColors.accentColor),
-                  //   ),
-                  //   tapFunc: () {
-                  //     context.go(AppRoutes.result);
-                  //   },
-                  // ),
                 ],
               ),
             ),
