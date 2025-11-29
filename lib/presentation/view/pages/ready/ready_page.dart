@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:hackathon_app/constants/theme/app_colors.dart';
 import 'package:hackathon_app/utils/ruby_text.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:permission_handler/permission_handler.dart';
@@ -64,9 +66,12 @@ class _ReadyPageState extends State<ReadyPage> {
       });
 
       // フレーズ検出
-      if (!_foundTarget && _text.contains('大丈夫ですか')) {
+      if (!_foundTarget && _text.contains('大丈夫')) {
         _foundTarget = true;
-        await Future.microtask(() => context.go(AppRoutes.game));
+
+        await _speech.stop();
+        if (!mounted) return;
+        context.go(AppRoutes.game);
       }
 
       // 短いフレーズ向けに完了したら再起動
@@ -97,9 +102,14 @@ class _ReadyPageState extends State<ReadyPage> {
     _voiceCounter = 0; // 判定後リセット
   }
 },
+    listenOptions: stt.SpeechListenOptions(
     listenMode: stt.ListenMode.dictation,
     cancelOnError: false,
     partialResults: true,
+    // モードによっては autoPunctuation なども指定可能
+    autoPunctuation: true,
+    enableHapticFeedback: false,
+  ),
     listenFor: const Duration(seconds: 5), // 5秒以内に短いフレーズを検出
     pauseFor: const Duration(seconds: 1),  // 一瞬止まったら自動停止
   );
@@ -124,7 +134,8 @@ class _ReadyPageState extends State<ReadyPage> {
 
   @override
   void dispose() {
-    _speech.stop();
+    unawaited(_speech.stop());
+    unawaited(_speech.cancel());
     super.dispose();
   }
 
@@ -143,7 +154,7 @@ class _ReadyPageState extends State<ReadyPage> {
           width: 10,
           height: height,
           decoration: BoxDecoration(
-            color: Colors.blueAccent.withOpacity(0.65),
+            color: AppColors.azureBlue,
             borderRadius: BorderRadius.circular(20),
           ),
         );
@@ -195,7 +206,7 @@ class _ReadyPageState extends State<ReadyPage> {
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.8),
+                  color: AppColors.accentColor,
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(

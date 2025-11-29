@@ -36,7 +36,7 @@ class _TopPageState extends State<TopPage> {
                 style: TextStyle(color: AppColors.accentColor),
               ),
               tapFunc: () {
-                context.go(AppRoutes.game);
+                context.go(AppRoutes.ready);
               },
             ),
             CommonButton(
