@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:ui';
+
 import 'package:hackathon_app/presentation/view/pages/game/components/heart_beat_wave.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:vibration/vibration.dart';
@@ -8,13 +11,18 @@ import 'package:vibration/vibration.dart';
 class ShakeManager {
   bool _movingDown = false;
   final double _threshold = 2.0;
+  StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
 
-  ShakeManager({required this.controller});
+  ShakeManager({required this.controller, required this.successFunc});
   final HeartbeatWaveController controller;
+  final VoidCallback successFunc;
 
   void gameStart() {
+    if (_accelerometerSubscription != null) {
+      _accelerometerSubscription = null;
+    }
     // ignore: deprecated_member_use
-    accelerometerEvents.listen((event) async {
+    _accelerometerSubscription = accelerometerEvents.listen((event) async {
       double z = event.z;
 
       // 下方向に動いた
@@ -30,6 +38,7 @@ class ShakeManager {
           );
           controller.triggerPulse();
         }
+        successFunc();
       }
 
       // 上方向に戻ったらカウント
@@ -38,5 +47,11 @@ class ShakeManager {
         controller.triggerPulse();
       }
     });
+  }
+
+  Future<void> dispose() async {
+    // ★ センサーの購読をキャンセルし、ストリームを停止
+    await _accelerometerSubscription?.cancel();
+    _accelerometerSubscription = null;
   }
 }

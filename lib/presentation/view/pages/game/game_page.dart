@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hackathon_app/constants/routes/app_routes.dart';
@@ -17,33 +19,68 @@ class GamePage extends StatefulWidget {
 
 class _GamePageState extends State<GamePage> {
   static const double _optimalBpm = 120;
-  late final ShakeManager _shakeManager;
+
+  // マネージャーとコントローラーを late final で宣言
   late final HeartbeatWaveController _heartbeatController;
+  late final CountdownManager _countdownManager;
+  late final ShakeManager _shakeManager;
+
+  // 状態変数
+  int _countDown = 0; // 成功回数
 
   @override
   void initState() {
     super.initState();
     _heartbeatController = HeartbeatWaveController();
-    _shakeManager = ShakeManager(controller: _heartbeatController);
+
+    void isSuccess() {
+      setState(() {
+        _countDown++;
+      });
+    }
+
+    void checkCondition(int currentTime) {
+      if (!mounted) return;
+
+      if (currentTime <= 40 && _countDown == 0) {
+        _countdownManager.stopAndFinish();
+      }
+    }
+
+    void navigateToResult(int remainingSeconds) {
+      if (mounted) {
+        context.go(AppRoutes.result, extra: (remainingSeconds, _countDown));
+      }
+    }
+
+    _countdownManager = CountdownManager(
+      onFinished: () => navigateToResult(60),
+      onForcedStop: navigateToResult,
+      onTick: checkCondition,
+    );
+
+    _shakeManager = ShakeManager(
+      controller: _heartbeatController,
+      successFunc: isSuccess,
+    );
+
+    // --- ゲーム開始処理 ---
+    _countdownManager.start();
+    _shakeManager.gameStart();
+  }
+
+  // リソースを解放するために dispose をオーバーライド
+  @override
+  void dispose() {
+    // タイマーをキャンセル
+    unawaited(_shakeManager.dispose());
+    _countdownManager.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final CountdownManager countdownManager = CountdownManager(
-      // TODO　↓extraの90に現在の押した回数を入れる
-      onFinished: () => context.go(AppRoutes.result, extra: (60, 90)),
-      // TODO　↓extraの100に現在の押した回数を入れる
-      onForcedStop: (remainingSeconds) =>
-          context.go(AppRoutes.result, extra: (remainingSeconds, 100)),
-    );
-
-    void gameStart() {
-      countdownManager.start();
-    }
-
-    gameStart();
-    _shakeManager.gameStart();
-
+    // buildメソッド内ではインスタンスの生成やタイマー開始は行わない
     return Scaffold(
       body: SafeArea(
         child: Row(
@@ -59,23 +96,28 @@ class _GamePageState extends State<GamePage> {
                 ),
               ),
             ),
-            // 右側: deepSpaceBlue色のボックス
+            // 右側: deepSpaceBlue色のボックス (タップ処理)
             Expanded(
               child: GestureDetector(
                 onTap: () {
-                  debugPrint('Hand placement area tapped');
                   _heartbeatController.triggerPulse();
                 },
                 child: Container(
                   color: AppColors.deepSpaceBlue,
-                  child: const Center(
-                    child: Text(
-                      'ここに手をおいてね！',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  child: Center(
+                    child: Column(
+                      // カウントを表示するためにColumnでラップ
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'ここに手をおいてね！',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
