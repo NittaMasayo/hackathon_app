@@ -49,8 +49,8 @@ class ShakeManager {
   }
 
   /// リソースを解放
-  void dispose() {
-    _subscription?.cancel();
+  Future<void> dispose() async {
+    await _subscription?.cancel();
     _subscription = null;
     _isStarted = false;
   }
