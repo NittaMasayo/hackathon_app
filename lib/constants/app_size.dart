@@ -2,6 +2,7 @@
 /// 必要そうなサイズを定義するクラス
 ///
 abstract final class AppSize {
+  static const double zero = 0.0;
   static const double xxs = 8.0;
   static const double xs = 10.0;
   static const double sm = 12.0;
@@ -10,6 +11,7 @@ abstract final class AppSize {
   static const double md = 18.0;
   static const double xl = 20.0;
   static const double lg = 24.0;
+  static const double xxl = 28.0;
 
   // ボタンのデフォルトのサイズ
   static const double defaultBtnWidth = 160.0;
