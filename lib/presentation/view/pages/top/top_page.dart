@@ -64,7 +64,7 @@ class _TopPageState extends State<TopPage> {
                       ),
                     ),
                     tapFunc: () {
-                      context.go(AppRoutes.ready);
+                      context.go(AppRoutes.game);
                     },
                   ),
                   SizedBox(height: AppSize.sm),

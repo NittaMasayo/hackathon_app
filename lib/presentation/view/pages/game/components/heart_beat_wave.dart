@@ -71,7 +71,7 @@ class _HeartbeatWaveState extends State<HeartbeatWave>
       vsync: this,
       duration: const Duration(milliseconds: 420),
     );
-
+    _pulseController.addStatusListener(_handlePulseStatus);
     // Start a periodic timer to trigger the beat based on bpm
     // _startBeatTimer();
     widget.controller?._attach(_triggerPulse);
@@ -91,6 +91,11 @@ class _HeartbeatWaveState extends State<HeartbeatWave>
     // Make the pulse animation go forward from 0.
     // We use a non-blocking forward and it will naturally ease out.
     unawaited(_pulseController.forward(from: 0.0));
+  }
+  void _handlePulseStatus(AnimationStatus status) {
+    if (status == AnimationStatus.completed) {
+      unawaited(_pulseController.reverse());
+    }
   }
 
   @override
@@ -119,6 +124,7 @@ class _HeartbeatWaveState extends State<HeartbeatWave>
     widget.controller?._detach(_triggerPulse);
     _beatTimer?.cancel();
     _phaseController.dispose();
+    _pulseController.removeStatusListener(_handlePulseStatus);
     _pulseController.dispose();
     super.dispose();
   }

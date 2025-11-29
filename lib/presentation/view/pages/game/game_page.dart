@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hackathon_app/constants/app_size.dart';
 import 'package:hackathon_app/constants/routes/app_routes.dart';
 import 'package:hackathon_app/constants/theme/app_colors.dart';
 import 'package:hackathon_app/presentation/view/pages/game/components/heart_beat_wave.dart';
@@ -80,7 +81,6 @@ class _GamePageState extends State<GamePage> {
 
   @override
   Widget build(BuildContext context) {
-    // buildメソッド内ではインスタンスの生成やタイマー開始は行わない
     return Scaffold(
       body: SafeArea(
         child: Row(
@@ -88,7 +88,7 @@ class _GamePageState extends State<GamePage> {
             // 左側: HeartbeatWave
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(AppSize.sm),
                 child: HeartbeatWave(
                   bpm: _optimalBpm,
                   waveColor: AppColors.azureBlue,
@@ -98,26 +98,15 @@ class _GamePageState extends State<GamePage> {
             ),
             // 右側: deepSpaceBlue色のボックス (タップ処理)
             Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  _heartbeatController.triggerPulse();
-                },
-                child: Container(
-                  color: AppColors.deepSpaceBlue,
-                  child: Center(
-                    child: Column(
-                      // カウントを表示するためにColumnでラップ
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'ここに手をおいてね！',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+              child: Container(
+                color: AppColors.deepSpaceBlue,
+                child: const Center(
+                  child: Text(
+                    'ここに手をおいてね！',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: AppSize.lg,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
