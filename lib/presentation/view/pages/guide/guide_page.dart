@@ -24,31 +24,27 @@ class GuidePage extends StatelessWidget {
                 children: [
                   // ステップ1
                   SizedBox(
-                    width: 300,
+                    width: (MediaQuery.of(context).size.width / 3) - AppSize.lg,
                     child: _buildGuideStep(
                       stepNumber: '1',
                       imagePath: 'assets/images/chara/cat_speak_loudly.png',
-                      title: 'おおきなこえで よびかけ！',
+                      title: '大きな声で よびかけ！',
                       descriptions: [
                         '「だいじょうぶですかー？」',
                         'ってスマホにむかって',
-                        'おおきなこえで さけぼう！',
+                        '大きな声で さけぼう！',
                       ],
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: AppSize.xxs),
                   // ステップ2
                   SizedBox(
-                    width: 300,
+                    width: (MediaQuery.of(context).size.width / 3) - AppSize.lg,
                     child: _buildGuideStep(
                       stepNumber: '2',
                       imagePath: 'assets/images/chara/cat_heart_massage.png',
                       title: 'しんぞうマッサージ！',
-                      descriptions: [
-                        'スマホをりょうてでもって',
-                        'うえ↑した↓うえ↑した↓',
-                        'ブルブルしたらせいかい！',
-                      ],
+                      descriptions: ['スマホを両手でもって', '上↑下↓上↑下↓', 'ブルブルしたらせいかい！'],
                     ),
                   ),
                 ],

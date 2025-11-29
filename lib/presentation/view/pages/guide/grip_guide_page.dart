@@ -46,17 +46,7 @@ class GripGuidePage extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 40),
                     child: const Text(
-                      'りょうてでしっかりもって',
-                      style: TextStyle(
-                        fontSize: AppSize.md,
-                        color: AppColors.subtitleGray,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 40),
-                    child: const Text(
-                      '画面にふれないようにしてね！',
+                      '両手でしっかりもって\n画面にふれないようにしてね！',
                       style: TextStyle(
                         fontSize: AppSize.md,
                         color: AppColors.subtitleGray,
