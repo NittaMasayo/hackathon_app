@@ -97,39 +97,44 @@ class GuidePage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
-        // ステップ番号
-        Container(
-          width: AppSize.xxl,
-          height: AppSize.xxl,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            color: AppColors.strawberryRed,
-          ),
-          child: Center(
-            child: Text(
-              stepNumber,
-              style: const TextStyle(
-                fontSize: AppSize.nm,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: AppSize.xxs),
         // キャラクター画像
         Flexible(
           child: Image.asset(imagePath, height: 200, fit: BoxFit.contain),
         ),
         const SizedBox(height: AppSize.xxs),
-        // タイトル
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: AppSize.md,
-            fontWeight: FontWeight.bold,
-            color: AppColors.deepSpaceBlue,
-          ),
+        // タイトル&ステップ番号
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: AppSize.xxs,
+          children: [
+            Container(
+              width: AppSize.xxl,
+              height: AppSize.xxl,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.strawberryRed,
+              ),
+              child: Center(
+                child: Text(
+                  stepNumber,
+                  style: const TextStyle(
+                    fontSize: AppSize.nm,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: AppSize.md,
+                fontWeight: FontWeight.bold,
+                color: AppColors.deepSpaceBlue,
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: AppSize.xxs),
         // 説明文
