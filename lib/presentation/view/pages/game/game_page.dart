@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hackathon_app/constants/app_size.dart';
 import 'package:hackathon_app/constants/routes/app_routes.dart';
 import 'package:hackathon_app/constants/theme/app_colors.dart';
 import 'package:hackathon_app/presentation/view/pages/game/components/heart_beat_wave.dart';
@@ -47,8 +48,8 @@ class _GamePageState extends State<GamePage> {
   }
 
   @override
-  void dispose() {
-    _shakeManager.dispose();
+  Future<void> dispose() async {
+    await _shakeManager.dispose();
     super.dispose();
   }
 
@@ -61,7 +62,7 @@ class _GamePageState extends State<GamePage> {
             // 左側: HeartbeatWave
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(AppSize.sm),
                 child: HeartbeatWave(
                   bpm: _optimalBpm,
                   waveColor: AppColors.azureBlue,
@@ -78,7 +79,7 @@ class _GamePageState extends State<GamePage> {
                     'ここに手をおいてね！',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 24,
+                      fontSize: AppSize.lg,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
