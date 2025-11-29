@@ -66,7 +66,7 @@ class _ReadyPageState extends State<ReadyPage> {
       // フレーズ検出
       if (!_foundTarget && _text.contains('大丈夫ですか')) {
         _foundTarget = true;
-        Future.microtask(() => context.go(AppRoutes.game));
+        await Future.microtask(() => context.go(AppRoutes.game));
       }
 
       // 短いフレーズ向けに完了したら再起動
