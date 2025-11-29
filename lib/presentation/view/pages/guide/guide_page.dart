@@ -17,77 +17,62 @@ class GuidePage extends StatelessWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            // メインコンテンツ
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSize.md),
+            // 中央: ステップ1とステップ2
+            Center(
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // ステップ1: 大声で呼びかけ（タイトル付き）
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // あそびかたタイトル
-                        const Text(
-                          'あそびかた',
-                          style: TextStyle(
-                            fontSize: AppSize.titleTextSize,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.strawberryRed,
-                          ),
-                        ),
-                        const SizedBox(height: AppSize.sm),
-                        // ステップ1
-                        _buildGuideStep(
-                          stepNumber: '1',
-                          imagePath: 'assets/images/chara/cat_speak_loudly.png',
-                          title: '大きな声で呼びかけ',
-                          descriptions: ['「大丈夫ですかー？」と', 'スマホに向かって叫ぼう！'],
-                        ),
+                  // ステップ1
+                  SizedBox(
+                    width: 300,
+                    child: _buildGuideStep(
+                      stepNumber: '1',
+                      imagePath: 'assets/images/chara/cat_speak_loudly.png',
+                      title: 'おおきなこえで よびかけ！',
+                      descriptions: [
+                        '「だいじょうぶですかー？」',
+                        'ってスマホにむかって',
+                        'おおきなこえで さけぼう！',
                       ],
                     ),
                   ),
-                  // ステップ2: 心臓マッサージ（タイトル分のスペース確保）
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // あそびかたタイトルと同じ高さの透明テキスト
-                        const Opacity(
-                          opacity: 0,
-                          child: Text(
-                            'あそびかた',
-                            style: TextStyle(
-                              fontSize: AppSize.titleTextSize,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: AppSize.sm),
-                        // ステップ2
-                        _buildGuideStep(
-                          stepNumber: '2',
-                          imagePath:
-                              'assets/images/chara/cat_heart_massage.png',
-                          title: '心臓マッサージ',
-                          descriptions: [
-                            'スマホを両手で持って',
-                            '上下運動をしよう！',
-                            '振動が来ればOK！',
-                          ],
-                        ),
+                  const SizedBox(width: 10),
+                  // ステップ2
+                  SizedBox(
+                    width: 300,
+                    child: _buildGuideStep(
+                      stepNumber: '2',
+                      imagePath: 'assets/images/chara/cat_heart_massage.png',
+                      title: 'しんぞうマッサージ！',
+                      descriptions: [
+                        'スマホをりょうてでもって',
+                        'うえ↑した↓うえ↑した↓',
+                        'ブルブルしたらせいかい！',
                       ],
                     ),
                   ),
                 ],
               ),
             ),
+            // 左上: タイトル
+            const Positioned(
+              left: AppSize.md,
+              top: AppSize.sm,
+              child: Text(
+                'あそびかた',
+                style: TextStyle(
+                  fontSize: AppSize.titleTextSize,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.azureBlue,
+                ),
+              ),
+            ),
             // 右下: 戻るボタン
             Positioned(
-              right: AppSize.xxs,
-              bottom: AppSize.md,
+              right: AppSize.zero,
+              bottom: AppSize.sm,
               child: CommonButton(
-                bgColor: AppColors.strawberryRed,
+                //bgColor: AppColors.strawberryRed,
                 children: const Text(
                   'もどる',
                   style: TextStyle(
@@ -119,8 +104,8 @@ class GuidePage extends StatelessWidget {
       children: [
         // ステップ番号
         Container(
-          width: 32,
-          height: 32,
+          width: AppSize.xxl,
+          height: AppSize.xxl,
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
             color: AppColors.strawberryRed,
@@ -129,19 +114,19 @@ class GuidePage extends StatelessWidget {
             child: Text(
               stepNumber,
               style: const TextStyle(
-                fontSize: 18,
+                fontSize: AppSize.nm,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
           ),
         ),
-        const SizedBox(height: AppSize.xs),
+        const SizedBox(height: AppSize.xxs),
         // キャラクター画像
         Flexible(
-          child: Image.asset(imagePath, height: 120, fit: BoxFit.contain),
+          child: Image.asset(imagePath, height: 200, fit: BoxFit.contain),
         ),
-        const SizedBox(height: AppSize.xs),
+        const SizedBox(height: AppSize.xxs),
         // タイトル
         Text(
           title,
@@ -151,7 +136,7 @@ class GuidePage extends StatelessWidget {
             color: AppColors.deepSpaceBlue,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: AppSize.xxs),
         // 説明文
         ...descriptions.map(
           (text) => Text(
