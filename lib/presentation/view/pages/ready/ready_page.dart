@@ -22,6 +22,11 @@ class _ReadyPageState extends State<ReadyPage> {
   String _text = '';
   bool _foundTarget = false;
 
+  // 音量チェック関連の状態
+  StreamSubscription? _listeningSubscription;
+  Timer? _volumeCheckTimer;
+  bool _isListening = false;
+
   double _soundLevel = 0.0;
   double _visualLevel = 0.0;
   double minVoiceLevel = 3; // 3以下は雑音として無視
@@ -47,27 +52,62 @@ class _ReadyPageState extends State<ReadyPage> {
 
     bool available = await _speech.initialize(
       onStatus: (status) async {
-        if (status == 'done') await _startListening();
+        // リスニングが自動で停止した場合（例: done/error）は再開を試みる
+        if (status == 'done' && mounted) {
+          // ★ 音量チェック付きのリスニング関数を呼ぶ
+          await _startListeningWithVolumeCheck();
+        }
       },
-      onError: (_) => _startListening(),
+      onError: (_) => _startListeningWithVolumeCheck(),
     );
 
-    if (available) await _startListening();
+    // ★ 初期化成功後、音量チェック付きでリスニングを開始
+    if (available) await _startListeningWithVolumeCheck();
   }
 
   void _showVolumeUpDialog() async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return VolumeUpDialog();
+        return const VolumeUpDialog(); // const を追加
       },
     );
   }
 
-  Future<void> _startListening() async {
-    if (!_speech.isAvailable || !_speech.isNotListening) return;
+  ///
+  /// ★ 音量チェックを行い、閾値に達しない場合はダイアログを表示するリスニング開始関数
+  ///
+  Future<void> _startListeningWithVolumeCheck() async {
+    if (_isListening || !_speech.isAvailable) return;
 
-    await _speech.listen(
+    // 既存のタイマーと購読をキャンセルしてクリーンな状態にする
+    _volumeCheckTimer?.cancel();
+    _listeningSubscription?.cancel();
+
+    // リスニング開始フラグを設定
+    _isListening = true;
+
+    // 1. 音量チェック用のタイムアウトタイマーを設定
+    // 画面が表示されてから一定時間（例：3秒）話しかけがない場合、音量不足の可能性を指摘
+    bool hasSpoken = false;
+    _volumeCheckTimer = Timer(const Duration(seconds: 3), () async {
+      // 3秒経っても十分な音量が検出されていない、かつ、発話中/認識中ではない場合
+      if (!hasSpoken && mounted) {
+        // リスニングを停止し、ダイアログを表示
+        await _speech.stop();
+        _isListening = false;
+        if (mounted) _showVolumeUpDialog();
+
+        // ダイアログが閉じられた後、改めてリスニングを再開する
+        // （ユーザーが音量を上げたことを期待）
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (mounted) await _startListeningWithVolumeCheck();
+      }
+      _volumeCheckTimer = null;
+    });
+
+    // 2. STTリスニングを開始
+    _listeningSubscription = await _speech.listen(
       onResult: (result) async {
         if (!mounted) return;
 
@@ -78,7 +118,9 @@ class _ReadyPageState extends State<ReadyPage> {
         // フレーズ検出
         if (!_foundTarget && _text.contains('大丈夫')) {
           _foundTarget = true;
-
+          // 成功したらタイマーと購読をキャンセルして画面遷移
+          _volumeCheckTimer?.cancel();
+          _isListening = false;
           await _speech.stop();
           if (!mounted) return;
           context.go(AppRoutes.game);
@@ -86,9 +128,11 @@ class _ReadyPageState extends State<ReadyPage> {
 
         // 短いフレーズ向けに完了したら再起動
         if (result.finalResult && mounted) {
+          _volumeCheckTimer?.cancel();
+          _isListening = false;
           await _speech.stop();
           await Future.delayed(const Duration(milliseconds: 100));
-          if (mounted) await _startListening();
+          if (mounted) await _startListeningWithVolumeCheck();
         }
       },
       onSoundLevelChange: (level) {
@@ -99,7 +143,10 @@ class _ReadyPageState extends State<ReadyPage> {
           _soundLevel = adjustedLevel;
         });
 
+        // ★ 音量チェックロジック：音量が閾値を超えたらタイマーをキャンセルし、発話フラグを立てる
         if (adjustedLevel > minVoiceLevel) {
+          hasSpoken = true;
+          _volumeCheckTimer?.cancel(); // タイマーをキャンセル (発話が確認されたため)
           _voiceCounter++;
         } else {
           _voiceCounter = 0;
@@ -107,8 +154,6 @@ class _ReadyPageState extends State<ReadyPage> {
 
         // 3回連続（例: 数百ミリ秒）閾値以上なら声と判定
         if (_voiceCounter >= 3) {
-          // ここで声として扱う
-          // 例: アラートや波形表示など
           _voiceCounter = 0; // 判定後リセット
         }
       },
@@ -143,6 +188,9 @@ class _ReadyPageState extends State<ReadyPage> {
 
   @override
   void dispose() {
+    // リソースの解放
+    _volumeCheckTimer?.cancel(); // タイマーをキャンセル
+    _listeningSubscription?.cancel(); // 購読をキャンセル
     unawaited(_speech.stop());
     unawaited(_speech.cancel());
     super.dispose();
@@ -173,6 +221,7 @@ class _ReadyPageState extends State<ReadyPage> {
   }
 
   Widget _buildRubyText() {
+    // ... (既存の_buildRubyTextは変更なし) ...
     final style = const TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
     final rubyStyle = const TextStyle(fontSize: 12, color: Colors.grey);
 
