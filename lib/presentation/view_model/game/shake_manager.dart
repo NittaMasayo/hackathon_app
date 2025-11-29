@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:hackathon_app/presentation/view/pages/game/components/heart_beat_wave.dart';
 import 'package:sensors_plus/sensors_plus.dart';
@@ -14,8 +15,9 @@ class ShakeManager {
   bool _isStarted = false;
   bool _vibrated = false;
 
-  ShakeManager({required this.controller});
+  ShakeManager({required this.controller, required this.successFunc});
   final HeartbeatWaveController controller;
+  final VoidCallback successFunc;
 
   void gameStart() {
     if (_isStarted) return;
@@ -34,6 +36,7 @@ class ShakeManager {
           await Vibration.vibrate(duration: 50);
           controller.triggerPulse();
         }
+        successFunc();
       }
 
       // 上方向に戻ったらリセット
