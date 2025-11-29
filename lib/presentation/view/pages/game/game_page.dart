@@ -61,11 +61,6 @@ class _GamePageState extends State<GamePage> {
             ),
             // 右側: deepSpaceBlue色のボックス
             Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  debugPrint('Hand placement area tapped');
-                  _heartbeatController.triggerPulse();
-                },
                 child: Container(
                   color: AppColors.deepSpaceBlue,
                   child: const Center(
@@ -79,7 +74,6 @@ class _GamePageState extends State<GamePage> {
                     ),
                   ),
                 ),
-              ),
             ),
           ],
         ),
