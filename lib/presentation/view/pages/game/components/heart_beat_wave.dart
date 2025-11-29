@@ -40,7 +40,8 @@ class _HeartbeatWaveState extends State<HeartbeatWave>
     _phaseController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: (widget.waveSpeed * 1000).round()),
-    )..repeat();
+    );
+    unawaited(_phaseController.repeat());
 
     // short animation to represent the beat "pulse" (0..1)
     _pulseController = AnimationController(
@@ -65,7 +66,7 @@ class _HeartbeatWaveState extends State<HeartbeatWave>
   void _triggerPulse() {
     // Make the pulse animation go forward from 0.
     // We use a non-blocking forward and it will naturally ease out.
-    _pulseController.forward(from: 0.0);
+    unawaited(_pulseController.forward(from: 0.0));
   }
 
   @override
@@ -77,7 +78,9 @@ class _HeartbeatWaveState extends State<HeartbeatWave>
     if ((oldWidget.waveSpeed != widget.waveSpeed) ||
         (oldWidget.frequency != widget.frequency)) {
       _phaseController.duration = Duration(milliseconds: (widget.waveSpeed * 1000).round());
-      if (!_phaseController.isAnimating) _phaseController.repeat();
+      if (!_phaseController.isAnimating) {
+        unawaited(_phaseController.repeat());
+      }
     }
   }
 
