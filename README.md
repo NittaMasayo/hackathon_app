@@ -1,16 +1,19 @@
 # hackathon_app
 
-A new Flutter project.
+「リズムでレスキュー」
 
-## Getting Started
+## アプリの概要
 
-This project is a starting point for a Flutter application.
+- リズムで心臓マッサージの方法を覚えられる子ども向けアプリ
+- メインターゲットは小学 5 年生
+- 肉体的に心肺蘇生が可能なのが 10 歳以上からなのでターゲット層はその年代
 
-A few resources to get you started if this is your first Flutter project:
+## コーディング規約
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- MVVM を基本としたフォルダ構成を心がけること
+- components フォルダには各画面共通のコンポーネントを作成すること
+- 各画面のみに使用する component は各画面の pages フォルダに作成すること
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 備考
+
+- lint を設定しているので PR 提出時には CI ツールがエラーを吐いていないか確認すること
